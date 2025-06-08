@@ -1,0 +1,38 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john.doe@example.com"
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "email": "jane.smith@example.com"
+    }
+  ],
+  "extracts": [
+    {
+      "id": 1,
+      "title": "Extract 1",
+      "content": "Content of extract 1"
+    },
+    {
+      "id": 2,
+      "title": "Extract 2",
+      "content": "Content of extract 2"
+    }
+  ],
+  "cards": [
+    {
+      "id": 1,
+      "title": "Card 1",
+      "description": "Description of card 1"
+    },
+    {
+      "id": 2,
+      "title": "Card 2",
+      "description": "Description of card 2"
+    }
+  ]
+}
