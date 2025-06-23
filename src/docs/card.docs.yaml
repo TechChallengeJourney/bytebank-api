@@ -48,7 +48,7 @@ paths:
         schema:
           type: string
         description: ID único do cartão.
-    get:
+    put:
       tags:
         - Cards
       summary: Busca um cartão específico por ID
