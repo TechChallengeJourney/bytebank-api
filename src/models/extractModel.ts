@@ -1,16 +1,17 @@
 import { model, Schema } from 'mongoose'
+import { TransactionType } from '../enums/TransactionType'
 
 interface IExtract {
     userId: string
     date: Date
-    type: 'entrada' | 'saida'
+    type: TransactionType
     value: number
 }
 
 const extractSchema = new Schema<IExtract>({
     userId: { type: String, required: true },
     date: { type: Date, required: true },
-    type: { type: String, required: true, enum: ['entrada', 'saida'] },
+    type: { type: String, required: true, enum: Object.values(TransactionType) },
     value : { type: Number, required: true }
 })
 

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Extract from '../models/extractModel';
 import mongoose from 'mongoose';
 import User from '../models/userModel';
+import { TransactionType } from '../enums/TransactionType';
 
 export const getExtract = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -29,6 +30,10 @@ export const createExtract = async (req: Request, res: Response): Promise<any> =
 
         if (!mongoose.Types.ObjectId.isValid(userId)) {
             return res.status(400).json({ message: 'userId inválido' });
+        }
+
+        if (!Object.values(TransactionType).includes(type)) {
+            return res.status(400).json({ message: 'Tipo de movimentação inválido' })
         }
 
         const user = await User.findById(userId);
@@ -59,6 +64,10 @@ export const updateExtract = async (req: Request, res: Response): Promise<any> =
 
         if (!mongoose.Types.ObjectId.isValid(userId)) {
             return res.status(400).json({ message: 'userId inválido' });
+        }
+
+        if (!Object.values(TransactionType).includes(type)) {
+            return res.status(400).json({ message: 'Tipo de movimentação inválido' })
         }
 
         const user = await Extract.findById(userId);
