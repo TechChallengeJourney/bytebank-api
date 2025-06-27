@@ -58,7 +58,7 @@ To build and run the application using Docker, execute the following commands:
 
 2. Run the Docker container:
    ```
-   docker run -p 3000:3000 node-api-project
+   docker run -p 8080:8080 node-api-project
    ```
 
 ### API Endpoints
@@ -69,7 +69,7 @@ To build and run the application using Docker, execute the following commands:
 
 ### Swagger Documentation
 
-The API is documented using Swagger. You can access the documentation at `http://localhost:3000/api-docs` after starting the application.
+The API is documented using Swagger. You can access the documentation at `http://localhost:8080/api-docs` after starting the application.
 
 ### License
 
