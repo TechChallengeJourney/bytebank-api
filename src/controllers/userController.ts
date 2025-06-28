@@ -10,33 +10,6 @@ export const getUsers = async (req: Request, res: Response): Promise<any> => {
     }
 }
 
-export const createUser = async (req: Request, res: Response): Promise<any> => {
-    try {
-        const { name, email, password } = req.body;
-
-        if (!name || !email || !password) {
-            return res.status(400).json({ message: 'Nome, email e senha são obrigatórios' });
-        }
-
-        const existingUser = await User.findOne({ email }).lean();
-
-        if (existingUser) {
-            return res.status(409).json({ message: 'Email já está em uso' });
-        }
-
-        const newUser = await User.create({ name, email, password });
-
-        return res.status(201).json({
-            id: newUser._id.toString(),
-            name: newUser.name,
-            email: newUser.email
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: 'Erro ao criar usuário' });
-    }
-};
-
 export const updateUser = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
