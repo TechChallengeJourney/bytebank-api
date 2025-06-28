@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import User from '../models/userModel';
+import bcrypt from 'bcrypt';
 
 export const getUsers = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -13,18 +14,19 @@ export const getUsers = async (req: Request, res: Response): Promise<any> => {
 export const createUser = async (req: Request, res: Response): Promise<any> => {
     try {
         const { name, email, password } = req.body;
-
+        console.log(req)
         if (!name || !email || !password) {
-            return res.status(400).json({ message: 'Nome, email e senha são obrigatórios' });
+            return res.status(401).json({ message: 'Nome, e-mail e senha são obrigatórios.' });
         }
 
-        const existingUser = await User.findOne({ email }).lean();
+        const user = await User.findOne({ email }).lean();
 
-        if (existingUser) {
-            return res.status(409).json({ message: 'Email já está em uso' });
+        if (user) {
+            return res.status(401).json({ message: 'Já existe uma conta vinculada a este e-mail, tente cadastrar um outro ou efetue login.' });
         }
 
-        const newUser = await User.create({ name, email, password });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = await User.create({ name, email, password: hashedPassword });
 
         return res.status(201).json({
             id: newUser._id.toString(),
@@ -33,7 +35,7 @@ export const createUser = async (req: Request, res: Response): Promise<any> => {
         });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: 'Erro ao criar usuário' });
+        return res.status(500).json({ message: 'Ocorreu um erro, tente novamente mais tarde por favor!' });
     }
 };
 

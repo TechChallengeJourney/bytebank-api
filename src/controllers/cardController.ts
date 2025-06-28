@@ -9,7 +9,7 @@ export const getCards = async (req: Request, res: Response): Promise<any> => {
         const users = await Card.find().lean()
         return res.status(200).json(users);
     } catch (error) {
-        return res.status(500).json({ message: 'Erro ao buscar cartões' });
+        return res.status(401).json({ message: 'Erro ao buscar cartões' });
     }
 }
 
