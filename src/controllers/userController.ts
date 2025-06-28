@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import User from '../models/userModel';
-import bcrypt from 'bcrypt';
 
 export const getUsers = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -10,34 +9,6 @@ export const getUsers = async (req: Request, res: Response): Promise<any> => {
         return res.status(500).json({ message: 'Erro ao buscar usuários' })
     }
 }
-
-export const createUser = async (req: Request, res: Response): Promise<any> => {
-    try {
-        const { name, email, password } = req.body;
-        console.log(req)
-        if (!name || !email || !password) {
-            return res.status(401).json({ message: 'Nome, e-mail e senha são obrigatórios.' });
-        }
-
-        const user = await User.findOne({ email }).lean();
-
-        if (user) {
-            return res.status(401).json({ message: 'Já existe uma conta vinculada a este e-mail, tente cadastrar um outro ou efetue login.' });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await User.create({ name, email, password: hashedPassword });
-
-        return res.status(201).json({
-            id: newUser._id.toString(),
-            name: newUser.name,
-            email: newUser.email
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: 'Ocorreu um erro, tente novamente mais tarde por favor!' });
-    }
-};
 
 export const updateUser = async (req: Request, res: Response): Promise<any> => {
     try {

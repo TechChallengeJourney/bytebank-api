@@ -42,3 +42,32 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
             });
     }
 };
+
+
+export const registerUser = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { name, email, password } = req.body;
+
+        if (!name || !email || !password) {
+            return res.status(401).json({ message: 'Nome, e-mail e senha são obrigatórios.' });
+        }
+
+        const user = await User.findOne({ email }).lean();
+
+        if (user) {
+            return res.status(401).json({ message: 'Já existe uma conta vinculada a este e-mail, tente cadastrar um outro ou efetue login.' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = await User.create({ name, email, password: hashedPassword });
+
+        return res.status(201).json({
+            id: newUser._id.toString(),
+            name: newUser.name,
+            email: newUser.email
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Ocorreu um erro, tente novamente mais tarde por favor!' });
+    }
+};

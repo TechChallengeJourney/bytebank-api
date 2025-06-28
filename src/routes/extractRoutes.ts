@@ -5,12 +5,13 @@ import {
   updateExtract,
   deleteExtract
 } from '../controllers/extractController'
+import { validateToken } from '../middlewares/validateToken'
 
 const router = express.Router()
 
-router.get('/', getExtract)
-router.post('/', createExtract)
-router.put('/:id', updateExtract)
-router.delete('/:id', deleteExtract)
+router.get('/', validateToken, getExtract)
+router.post('/',validateToken, createExtract)
+router.put('/:id',validateToken, updateExtract)
+router.delete('/:id',validateToken, deleteExtract)
 
 export default router
