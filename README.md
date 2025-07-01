@@ -1,6 +1,6 @@
 # Node API Project
 
-This project is a Node.js API that provides GET, PUT, and DELETE endpoints for managing users, extracts, and cards. It is built using Express and includes Swagger documentation for easy reference.
+This project is a Node.js API that provides GET, PUT, and DELETE endpoints for managing users, transactions, and cards. It is built using Express and includes Swagger documentation for easy reference.
 
 ## Project Structure
 
