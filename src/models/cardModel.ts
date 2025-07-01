@@ -1,19 +1,28 @@
 import { model, Schema } from 'mongoose'
+import { CardFlag } from '../enums/cardFlag'
 
 interface ICard {
     userId: string
-    cardNumber: string
+    cardNumber: number
     name: string
     functions: [string]
     variant: string
+    expirationDate: Date
+    cvv: number
+    flag: CardFlag
+    blocked: boolean
 }
 
 const cardSchema = new Schema<ICard>({
     userId: { type: String, required: true },
-    cardNumber: { type: String, required: true },
+    cardNumber: { type: Number, required: true },
     name: { type: String, required: true },
-    functions: { type: [String], required: true, enum: ['credito', 'debito'] },
-    variant: { type: String, required: true }
+    functions: { type: [String], required: true, enum: ['credit', 'debit'] },
+    variant: { type: String, required: true },
+    expirationDate: { type: Date, required: true },
+    cvv : { type: Number, required: true },
+    flag: { type: String, required: true, enum: Object.values(CardFlag) },
+    blocked: { type: Boolean }
 })
 
 const Card = model<ICard>('Card', cardSchema)

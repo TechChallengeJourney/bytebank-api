@@ -7,6 +7,13 @@ paths:
         - Cards
       summary: Lista os cartões de um usuário
       description: Retorna uma lista de todos os cartões.
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: ID do usuário para filtrar os cartões.
       responses:
         '200':
           description: Lista de cartões retornada com sucesso.
@@ -39,6 +46,26 @@ paths:
         '400':
           description: Dados de entrada inválidos.
 
+  /get-all-cards:
+    get:
+      tags:
+        - Cards
+      summary: Retorna todos os cartões
+      description: Retorna todos os cartões cadastrados no sistema. Requer autenticação.
+      responses:
+        '200':
+          description: Lista de todos os cartões retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Card'
+        '401':
+          description: Token de autenticação ausente ou inválido.
+        '500':
+          description: Erro interno ao buscar cartões.
+
   /cards/{id}:
     # Parâmetro de ID definido uma vez para GET e DELETE
     parameters:
@@ -48,20 +75,6 @@ paths:
         schema:
           type: string
         description: ID único do cartão.
-    put:
-      tags:
-        - Cards
-      summary: Busca um cartão específico por ID
-      description: Retorna os detalhes de um único cartão pelo seu ID.
-      responses:
-        '200':
-          description: Detalhes do cartão.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Card'
-        '404':
-          description: Cartão não encontrado.
     delete:
       tags:
         - Cards
@@ -70,5 +83,28 @@ paths:
       responses:
         '200':
           description: Cartão deletado com sucesso (sem conteúdo de resposta).
+        '404':
+          description: Cartão não encontrado.
+
+  /cards/{id}/block:
+    put:
+      tags:
+        - Cards
+      summary: Atualiza o status bloqueado de um cartão
+      description: Atualiza o cartão para marcá-lo como bloqueado ou desbloqueado.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID único do cartão.
+      responses:
+        '200':
+          description: Cartão bloqueado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
         '404':
           description: Cartão não encontrado.
