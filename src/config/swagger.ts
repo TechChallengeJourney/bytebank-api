@@ -58,22 +58,25 @@ const options: swaggerJsdoc.Options = {
                         userId: { type: 'string', example: '60d0fe4f5311236168a109ca' },
                         cardNumber: { type: 'string', example: '**** **** **** 1234' },
                         name: { type: 'string', example: 'João da Silva' },
-                        functions: { type: 'array', example: ['credito'] },
+                        functions: { type: 'array', example: ['credit'] },
                         variant: { type: 'string', example: ['black'] },
+                        expirationDate: { type: 'Date', example: '2028-07-01T04:03:58.696Z' },
+                        cvv: { type: 'number', example: 157 },
+                        flag: { type: 'string', example: 'Elo' },
+                        blocked: { type: 'boolean', example: false }
                     },
                 },
                 CardInput: {
                     type: 'object',
                     properties: {
                         userId: { type: 'string', example: '60d0fe4f5311236168a109ca' },
-                        cardNumber: { type: 'string', example: '**** **** **** 1234' },
                         name: { type: 'string', example: 'João da Silva' },
                         functions: { type: 'array', example: ['credito'] },
                         variant: { type: 'string', example: ['black'] },
                     },
                     required: ['userId', 'cardNumber', 'name', 'functions', 'variant']
                 },
-                Extract: {
+                Transaction: {
                     type: 'object',
                     properties: {
                         _id: { type: 'string', example: '6859d060974ebbce5320e9a6' },
@@ -83,7 +86,7 @@ const options: swaggerJsdoc.Options = {
                         value: { type: 'number', example: 20 },
                     },
                 },
-                ExtractInput: {
+                TransactionInput: {
                     type: 'object',
                     properties: {
                         userId: { type: 'string', example: '6859d060974ebbce5320e9a6' },

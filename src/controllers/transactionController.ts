@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import Extract from '../models/extractModel';
+import Transaction from '../models/transactionModel';
 import mongoose from 'mongoose';
 import User from '../models/userModel';
-import { TransactionType } from '../enums/TransactionType';
+import { TransactionType } from '../enums/transactionType';
 
-export const getExtract = async (req: Request, res: Response): Promise<any> => {
+export const getTransaction = async (req: Request, res: Response): Promise<any> => {
     try {
         const { userId } = req.query
 
@@ -12,15 +12,15 @@ export const getExtract = async (req: Request, res: Response): Promise<any> => {
             return res.status(400).json({ message: 'userId é obrigatório e deve ser uma string' })
         }
 
-        const extracts = await Extract.find({ userId })
-        return res.status(200).json(extracts)
+        const transactions = await Transaction.find({ userId })
+        return res.status(200).json(transactions)
     } catch (error) {
         console.error(error)
-        return res.status(500).json({ message: 'Erro ao buscar extrato' })
+        return res.status(500).json({ message: 'Erro ao buscar transação' })
     }
 }
 
-export const createExtract = async (req: Request, res: Response): Promise<any> => {
+export const createTransaction = async (req: Request, res: Response): Promise<any> => {
     try {
         const { userId, value, type, date } = req.body
 
@@ -41,21 +41,21 @@ export const createExtract = async (req: Request, res: Response): Promise<any> =
             return res.status(400).json({ message: 'Usuário não encontrado' });
         }
 
-        const newExtract = await Extract.create({ userId, value, type, date })
-        return res.status(201).json(newExtract)
+        const newTransaction = await Transaction.create({ userId, value, type, date })
+        return res.status(201).json(newTransaction)
     } catch (error) {
         console.error(error)
-        return res.status(500).json({ message: 'Erro ao criar extrato' })
+        return res.status(500).json({ message: 'Erro ao criar transação' })
     }
 }
 
-export const updateExtract = async (req: Request, res: Response): Promise<any> => {
+export const updateTransaction = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
         const { userId, value, type, date } = req.body;
 
         if (!id) {
-            return res.status(400).json({ message: 'Id do extrato é obrigatório' });
+            return res.status(400).json({ message: 'Id da transação é obrigatório' });
         }
 
         if (!userId || !value || !type || !date) {
@@ -70,40 +70,40 @@ export const updateExtract = async (req: Request, res: Response): Promise<any> =
             return res.status(400).json({ message: 'Tipo de movimentação inválido' })
         }
 
-        const user = await Extract.findById(userId);
+        const user = await Transaction.findById(userId);
         if (!user) {
             return res.status(400).json({ message: 'Usuário não encontrado' });
         }
 
-        const newExtract = await Extract.create({ userId, value, type, date })
-        return res.status(201).json(newExtract)
+        const newTransaction = await Transaction.create({ userId, value, type, date })
+        return res.status(201).json(newTransaction)
     } catch (error) {
         console.error(error)
-        return res.status(500).json({ message: 'Erro ao criar extrato' })
+        return res.status(500).json({ message: 'Erro ao criar transação' })
     }
 }
 
-export const deleteExtract = async (req: Request, res: Response) => {
+export const deleteTransaction = async (req: Request, res: Response) => {
     try {
         const { id } = req.body;
 
         if (!id) {
-            res.status(400).json({ message: 'Id do extrato é obrigatório' })
+            res.status(400).json({ message: 'Id do transação é obrigatório' })
             return;
         }
 
-        const deletedCard = await Extract.findByIdAndDelete(id);
+        const deletedCard = await Transaction.findByIdAndDelete(id);
 
         if (!deletedCard) {
-            res.status(404).json({ message: 'Extrato não encontrado' })
+            res.status(404).json({ message: 'Transação não encontrada' })
             return;
         }
 
-        res.status(200).json({ message: 'Extrato deletado com sucesso' })
+        res.status(200).json({ message: 'Transação deletada com sucesso' })
         return;
     } catch (error) {
         console.log(error)
-        res.status(500).json({ message: 'Erro ao deletar Extrato' })
+        res.status(500).json({ message: 'Erro ao deletar Transação' })
         return;
     }
 }

@@ -3,11 +3,27 @@ import mongoose from 'mongoose';
 
 import Card from '../models/cardModel';
 import User from '../models/userModel';
+import { CardFlag } from '../enums/cardFlag';
 
 export const getCards = async (req: Request, res: Response): Promise<any> => {
     try {
-        const users = await Card.find().lean()
-        return res.status(200).json(users);
+        const cards = await Card.find().lean()
+        return res.status(200).json(cards);
+    } catch (error) {
+        return res.status(401).json({ message: 'Erro ao buscar cartões' });
+    }
+}
+
+export const getUserCards = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { userId } = req.query;
+
+        if (!userId) {
+            return res.status(400).json({ message: 'userId é obrigatório.' })
+        }
+
+        const cards = await Card.find({ userId })
+        return res.status(200).json(cards)
     } catch (error) {
         return res.status(401).json({ message: 'Erro ao buscar cartões' });
     }
@@ -15,9 +31,9 @@ export const getCards = async (req: Request, res: Response): Promise<any> => {
 
 export const createCard = async (req: Request, res: Response): Promise<any> => {
     try {
-        const { userId, cardNumber, name, functions, variant } = req.body;
+        const { userId, name, functions, variant } = req.body;
 
-        if (!userId || !cardNumber || !name || !functions || !variant) {
+        if (!userId || !name || !functions || !variant) {
             return res.status(400).json({ message: 'UserId, cardNumber, name, functions e variant são obrigatórios' });
         }
 
@@ -30,13 +46,17 @@ export const createCard = async (req: Request, res: Response): Promise<any> => {
             return res.status(400).json({ message: 'Usuário não encontrado' });
         }
 
-        const existingCard = await Card.findOne({ cardNumber }).lean();
+        const cardNumber = await generateUniqueCardNumber()
 
-        if (existingCard) {
-            return res.status(409).json({ message: 'Já existe um cartão com esse número' });
-        }
+        const cvv = Math.floor(100 + Math.random() * 900)
 
-        const newCard = await Card.create({ userId, cardNumber, name, functions, variant });
+        const expirationDate = new Date(new Date().setFullYear(new Date().getFullYear() + 3))
+
+        const flag = getRandomCardFlag()
+
+        const blocked = false;
+
+        const newCard = await Card.create({ userId, cardNumber, name, cvv, expirationDate, flag, functions, variant, blocked });
         return res.status(201).json(newCard);
     } catch (error) {
         console.log(error);
@@ -44,45 +64,6 @@ export const createCard = async (req: Request, res: Response): Promise<any> => {
     }
 };
 
-export const updateCard = async (req: Request, res: Response): Promise<any> => {
-    try {
-        const { id } = req.params;
-        const { userId, cardNumber, name, functions, variant } = req.body;
-
-        if (!id) {
-            return res.status(400).json({ message: 'Id do cartão é obrigatório' });
-        }
-
-        if (userId) {
-            return res.status(400).json({ message: 'O usuário do cartão não pode ser alterado'})
-        }
-
-        if (cardNumber) {
-            return res.status(400).json({ message: 'O número do cartão não pode ser alterado'})
-        }
-
-        if (!name && !functions && !variant) {
-            return res.status(400).json({ message: 'Nome, funções ou variante são obrigatórios' });
-        }
-
-        const card = await Card.findById(id)
-
-        if (!card) {
-            return res.status(404).json({ message: 'Cartão não encontrado' });
-        }
-
-        if (name) card.name = name
-        if (functions) card.functions = functions
-        if (variant) card.variant = variant
-
-        const updatedCard = await card.save()
-
-        return res.status(200).json(updatedCard);
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: 'Erro ao criar usuário' });
-    }
-};
 
 export const deleteCard = async (req: Request, res: Response) => {
     try {
@@ -107,4 +88,52 @@ export const deleteCard = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Erro ao deletar cartão' })
         return;
     }
+}
+
+export const blockCard = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({ message: 'Id é obrigatório' });
+        }
+
+        const card = await Card.findById(id)
+
+        if (!card) {
+            res.status(404).json({ message: 'Cartão não encontrado' })
+            return;
+        }
+
+        card.blocked = !card.blocked;
+
+        const updatedCard = await card.save()
+        return res.status(200).json(updatedCard);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Erro ao criar cartão' });
+    }
+};
+
+const generateUniqueCardNumber = async (): Promise<string> => {
+    let cardNumber = ''
+    let isDuplicate = true
+
+    while (isDuplicate) {
+        cardNumber = ''
+        for (let i = 0; i < 4; i++) {
+            cardNumber += Math.floor(1000 + Math.random() * 9000).toString()
+        }
+
+        const existingCard = await Card.findOne({ cardNumber }).lean()
+        isDuplicate = !!existingCard
+    }
+
+    return cardNumber
+}
+
+const getRandomCardFlag = (): CardFlag => {
+    const flags = Object.values(CardFlag)
+    const randomIndex = Math.floor(Math.random() * flags.length)
+    return flags[randomIndex]
 }
