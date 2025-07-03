@@ -41,7 +41,6 @@ export const updateUser = async (req: Request, res: Response): Promise<any> => {
             email: updatedUser.email
         });
     } catch (error) {
-        console.log(error);
         return res.status(500).json({ message: 'Erro ao criar usuário' });
     }
 };
@@ -63,7 +62,6 @@ export const deleteUser = async (req: Request, res: Response): Promise<any> => {
         res.status(200).json({ message: 'Usuário deletado com sucesso' })
         return;
     } catch (error) {
-        console.log(error)
         return res.status(500).json({ message: 'Erro ao deletar usuário' });
     }
 }

@@ -10,6 +10,23 @@ export const getCategories = async (req: Request, res: Response): Promise<any> =
     }
 }
 
+export const getCategoriesByType = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { type } = req.params;
+
+        if(!type) {
+            return res.status(401).json({ message: 'O tipo da categoria é obrigatório.' });
+        }
+
+        const categories = await Category.find({type}).lean()
+        
+        
+        return res.status(200).json(categories);
+    } catch (error) {
+        return res.status(401).json({ message: 'Erro ao buscar as categorias.' });
+    }
+}
+
 export const createCategory = async (req: Request, res: Response): Promise<any> => {
     try {
         const { name, type } = req.body;

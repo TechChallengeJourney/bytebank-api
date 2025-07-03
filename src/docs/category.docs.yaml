@@ -64,3 +64,21 @@ paths:
           description: Categoria não foi encontrada.
         '500':
           description: Erro ao deletar a categoria.
+  /categories/types/:type:
+    get:
+      tags:
+        - Categories
+      summary: Lista todas as categorias de um tipo de transação
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de categorias retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+        '401':
+          description: Não autorizado.
