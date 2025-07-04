@@ -76,6 +76,14 @@ const options: swaggerJsdoc.Options = {
                     },
                     required: ['userId', 'cardNumber', 'name', 'functions', 'variant']
                 },
+                CategoryInput: {
+                    type: 'object',
+                    properties: {
+                      name: { type: 'string', example: 'Alimentação' },
+                      type: { type: 'string', example: 'expense' }
+                    },
+                    required: ['name', 'type']
+                  },
                 Transaction: {
                     type: 'object',
                     properties: {

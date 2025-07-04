@@ -1,9 +1,6 @@
 import express, { Application } from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import swaggerUi from 'swagger-ui-express'
-// import swaggerDocument from './swagger/swagger.json'
-// import apiRoutes from './routes/api'
 import { setupSwagger } from './config/swagger'
 import { connectToDatabase } from './config/mongodb'
 import routes from './routes'
@@ -22,8 +19,6 @@ if (!MONGODB_URI) {
 // Middleware
 app.use(cors())
 app.use(express.json())
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
-// app.use('/api', apiRoutes)
 
 app.use('/api', routes)
 
