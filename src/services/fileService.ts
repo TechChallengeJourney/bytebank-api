@@ -3,8 +3,6 @@ import path from "path";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import File from "../models/fileUploadModel";
-
-// Extend Request type to include file property
 import { Request, Response } from "express";
 import sharp from "sharp";
 
@@ -16,18 +14,14 @@ declare global {
   }
 }
 
-// Enable file upload
+// Create folder to save files
 export const uploadDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
-const allowedTypes = [
-  "image/jpeg",
-  "image/png",
-  "image/gif",
-  "application/pdf",
-];
+const allowedTypes = [ "image/jpeg", "image/png", "image/gif","application/pdf"];
+
 export const uploadFile = async (req: Request, res: Response): Promise<any> => {
   const { file } = req;
   try {
@@ -39,7 +33,7 @@ export const uploadFile = async (req: Request, res: Response): Promise<any> => {
         });
     }
 
-    const fileType: string = file.mimetype; // Explicitly type fileType
+    const fileType: string = file.mimetype; 
 
     if (!fileType || !allowedTypes.includes(fileType)) {
       return res
@@ -55,16 +49,13 @@ export const uploadFile = async (req: Request, res: Response): Promise<any> => {
 
     const outputPath = path.join(uploadDir, filename);
 
-    // Use multer diskStorage: file.buffer is not available, use file.path
     if (fileType.startsWith("image/")) {
-      // If you want to process images, use sharp with file.path
       await sharp(file.path)
         .resize({ width: 1024 })
         .toFormat("jpeg", { quality: 80 })
         .toFile(outputPath);
-      fs.unlinkSync(file.path); // Remove temp file
+      fs.unlinkSync(file.path); 
     } else {
-      // For other files, just move from temp to uploads
       fs.renameSync(file.path, outputPath);
     }
 
