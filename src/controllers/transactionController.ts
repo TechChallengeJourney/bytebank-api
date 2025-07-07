@@ -57,9 +57,11 @@ export const createTransaction = async (req: Request, res: Response): Promise<an
         }
 
         const file = (req.file) ? await uploadFile(req, res) : null;
+
         const newTransaction = await Transaction.create({ userId, value, type, createdAt, categoryId, cardId, fileId: file?._id })
         return res.status(201).json(newTransaction)
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ message: 'Erro ao criar uma nova transação.' })
     }
 }

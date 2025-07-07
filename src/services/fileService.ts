@@ -24,23 +24,15 @@ const allowedTypes = [ "image/jpeg", "image/png", "image/gif","application/pdf"]
 
 export const uploadFile = async (req: Request, res: Response): Promise<any> => {
   const { file } = req;
-  try {
+
     if (!file) {
-      return res
-        .status(400)
-        .json({
-          message: "Arquivo não encontrado, tente novamente por favor.",
-        });
+      throw new Error( "Arquivo não encontrado, tente novamente por favor.");
     }
 
     const fileType: string = file.mimetype; 
 
     if (!fileType || !allowedTypes.includes(fileType)) {
-      return res
-        .status(400)
-        .json({
-          message: "O tipo do arquivo é inválido, tente outro tipo por favor.",
-        });
+      throw new Error("O tipo do arquivo é inválido, tente outro tipo por favor.");
     }
     
     const originalName = file.originalname;
@@ -50,13 +42,12 @@ export const uploadFile = async (req: Request, res: Response): Promise<any> => {
     const outputPath = path.join(uploadDir, filename);
 
     if (fileType.startsWith("image/")) {
-      await sharp(file.path)
+      await sharp(file.buffer)
         .resize({ width: 1024 })
         .toFormat("jpeg", { quality: 80 })
         .toFile(outputPath);
-      fs.unlinkSync(file.path); 
     } else {
-      fs.renameSync(file.path, outputPath);
+      fs.writeFileSync(outputPath, file.buffer);
     }
 
     const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
@@ -72,11 +63,4 @@ export const uploadFile = async (req: Request, res: Response): Promise<any> => {
     });
 
     return await newFile.save();
-  } catch (err) {
-    const errorMessage =
-      err instanceof Error
-        ? err.message
-        : "Ocorreu um erro ao tentar baixar este arquivo, tente novamente por favor.";
-    res.status(500).json({ message: errorMessage });
-  }
 };
