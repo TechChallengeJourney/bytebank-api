@@ -6,6 +6,7 @@ import { TransactionType } from '../enums/transactionType';
 import { uploadFile } from '../services/fileService';
 import Category from '../models/categoryModel';
 import Card from '../models/cardModel';
+import Method from '../models/methodsModel';
 
 export const getTransaction = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -25,7 +26,7 @@ export const getTransaction = async (req: Request, res: Response): Promise<any> 
 
 export const createTransaction = async (req: Request, res: Response): Promise<any> => {
     try {
-        const { userId, value, type, createdAt, categoryId, cardId } = req.body
+        const { userId, value, type, createdAt, categoryId, methodId, cardId } = req.body
 
         if (!userId || !value || !type || !createdAt || !categoryId) {
             return res.status(400).json({ message: 'Preencha todos os campos obrigatórios, por favor!' })
@@ -49,6 +50,11 @@ export const createTransaction = async (req: Request, res: Response): Promise<an
             return res.status(400).json({ message: 'Categoria não foi encontrada, tente novamente por favor.' });
         }
 
+        const isValidMethod = await Method.findById(methodId);
+        if(!isValidMethod) {
+            return res.status(400).json({ message: 'Método de pagamento não foi encontrado, tente novamente por favor.' });
+        }
+
         if(cardId) {
             const isValidCard = await Card.findById(cardId);
             if (!isValidCard) {
@@ -58,7 +64,7 @@ export const createTransaction = async (req: Request, res: Response): Promise<an
 
         const file = (req.file) ? await uploadFile(req, res) : null;
 
-        const newTransaction = await Transaction.create({ userId, value, type, createdAt, categoryId, cardId, fileId: file?._id })
+        const newTransaction = await Transaction.create({ userId, value, type, createdAt, categoryId, methodId, cardId, fileId: file?._id })
         return res.status(201).json(newTransaction)
     } catch (error) {
         console.log(error)
@@ -69,7 +75,7 @@ export const createTransaction = async (req: Request, res: Response): Promise<an
 export const updateTransaction = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
-        const { userId, value, type, createdAt, categoryId, cardId  } = req.body;
+        const { userId, value, type, createdAt, categoryId, methodId, cardId  } = req.body;
 
         if (!id) {
             return res.status(400).json({ message: 'Id da transação é obrigatório' });
@@ -97,6 +103,11 @@ export const updateTransaction = async (req: Request, res: Response): Promise<an
             return res.status(400).json({ message: 'Categoria não foi encontrada, tente novamente por favor.' });
         }
 
+        const isValidMethod = await Method.findById(methodId);
+        if(!isValidMethod) {
+            return res.status(400).json({ message: 'Método de pagamento não foi encontrado, tente novamente por favor.' });
+        }
+
         if(cardId) {
             const isValidCard = await Card.findById(cardId);
             if (!isValidCard) {
@@ -105,7 +116,7 @@ export const updateTransaction = async (req: Request, res: Response): Promise<an
         }
 
         const file = (req.file) ? await uploadFile(req, res) : null;
-        const newTransaction = await Transaction.create({ userId, value, type, createdAt, categoryId, cardId, fileId: file?._id })
+        const newTransaction = await Transaction.create({ userId, value, type, createdAt, categoryId, methodId, cardId, fileId: file?._id })
         return res.status(201).json(newTransaction)
     } catch (error) {
         console.error(error)
