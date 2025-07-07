@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import { setupSwagger } from './config/swagger'
 import { connectToDatabase } from './config/mongodb'
 import routes from './routes'
+import path from 'path'
 
 dotenv.config()
 
@@ -19,6 +20,7 @@ if (!MONGODB_URI) {
 // Middleware
 app.use(cors())
 app.use(express.json())
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 app.use('/api', routes)
 
