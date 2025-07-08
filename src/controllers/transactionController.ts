@@ -3,6 +3,10 @@ import Transaction from '../models/transactionModel';
 import mongoose from 'mongoose';
 import User from '../models/userModel';
 import { TransactionType } from '../enums/transactionType';
+import { uploadFile } from '../services/fileService';
+import Category from '../models/categoryModel';
+import Card from '../models/cardModel';
+import Method from '../models/methodsModel';
 
 export const getTransaction = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -22,64 +26,101 @@ export const getTransaction = async (req: Request, res: Response): Promise<any> 
 
 export const createTransaction = async (req: Request, res: Response): Promise<any> => {
     try {
-        const { userId, value, type, date } = req.body
+        const { userId, value, type, createdAt, categoryId, methodId, cardId } = req.body
 
-        if (!userId || !value || !type || !date) {
-            return res.status(400).json({ message: 'UserId, value, type e date são obrigatórios' })
+        if (!userId || !value || !type || !createdAt || !categoryId) {
+            return res.status(400).json({ message: 'Preencha todos os campos obrigatórios, por favor!' })
         }
 
         if (!mongoose.Types.ObjectId.isValid(userId)) {
-            return res.status(400).json({ message: 'userId inválido' });
+            return res.status(400).json({ message: 'O id do usuário é inválido.' });
         }
 
         if (!Object.values(TransactionType).includes(type)) {
-            return res.status(400).json({ message: 'Tipo de movimentação inválido' })
+            return res.status(400).json({ message: 'Tipo de movimentação é inválido.' })
         }
 
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(400).json({ message: 'Usuário não encontrado' });
+        const isValidUser = await User.findById(userId);
+        if (!isValidUser) {
+            return res.status(400).json({ message: 'Usuário não foi encontrado, tente novamente por favor.' });
         }
 
-        const newTransaction = await Transaction.create({ userId, value, type, date })
+        const isValidCategoy = await Category.findById(categoryId);
+        if (!isValidCategoy) {
+            return res.status(400).json({ message: 'Categoria não foi encontrada, tente novamente por favor.' });
+        }
+
+        const isValidMethod = await Method.findById(methodId);
+        if(!isValidMethod) {
+            return res.status(400).json({ message: 'Método de pagamento não foi encontrado, tente novamente por favor.' });
+        }
+
+        if(cardId) {
+            const isValidCard = await Card.findById(cardId);
+            if (!isValidCard) {
+                return res.status(400).json({ message: 'Cartão não encontrado, escolha outro por favor.' });
+            }
+        }
+
+        const file = (req.file) ? await uploadFile(req, res) : null;
+
+        const newTransaction = await Transaction.create({ userId, value, type, createdAt, categoryId, methodId, cardId, fileId: file?._id })
         return res.status(201).json(newTransaction)
     } catch (error) {
-        console.error(error)
-        return res.status(500).json({ message: 'Erro ao criar transação' })
+        console.log(error)
+        return res.status(500).json({ message: 'Erro ao criar uma nova transação.' })
     }
 }
 
 export const updateTransaction = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
-        const { userId, value, type, date } = req.body;
+        const { userId, value, type, createdAt, categoryId, methodId, cardId  } = req.body;
 
         if (!id) {
             return res.status(400).json({ message: 'Id da transação é obrigatório' });
         }
 
-        if (!userId || !value || !type || !date) {
-            return res.status(400).json({ message: 'UserId, value, type e date são obrigatórios' })
+        if (!userId || !value || !type || !createdAt || !categoryId) {
+            return res.status(400).json({ message: 'Preencha todos os campos obrigatórios, por favor!' })
         }
 
         if (!mongoose.Types.ObjectId.isValid(userId)) {
-            return res.status(400).json({ message: 'userId inválido' });
+            return res.status(400).json({ message: 'O id do usuário é inválido.' });
         }
 
         if (!Object.values(TransactionType).includes(type)) {
             return res.status(400).json({ message: 'Tipo de movimentação inválido' })
         }
 
-        const user = await Transaction.findById(userId);
-        if (!user) {
-            return res.status(400).json({ message: 'Usuário não encontrado' });
+        const isValidUser = await User.findById(userId);
+        if (!isValidUser) {
+            return res.status(400).json({ message: 'Usuário não foi encontrado, tente novamente por favor.' });
         }
 
-        const newTransaction = await Transaction.create({ userId, value, type, date })
+        const isValidCategoy = await Category.findById(categoryId);
+        if (!isValidCategoy) {
+            return res.status(400).json({ message: 'Categoria não foi encontrada, tente novamente por favor.' });
+        }
+
+        const isValidMethod = await Method.findById(methodId);
+        if(!isValidMethod) {
+            return res.status(400).json({ message: 'Método de pagamento não foi encontrado, tente novamente por favor.' });
+        }
+
+        if(cardId) {
+            const isValidCard = await Card.findById(cardId);
+            if (!isValidCard) {
+                return res.status(400).json({ message: 'Cartão não encontrado, escolha outro por favor.' });
+            }
+        }
+
+        const file = (req.file) ? await uploadFile(req, res) : null;
+        const newTransaction = await Transaction.create({ userId, value, type, createdAt, categoryId, methodId, cardId, fileId: file?._id })
         return res.status(201).json(newTransaction)
     } catch (error) {
         console.error(error)
-        return res.status(500).json({ message: 'Erro ao criar transação' })
+        return res.status(500).json({ message: 'Erro ao atualizar a transação, tente novamente por favor.' })
     }
 }
 
@@ -102,7 +143,6 @@ export const deleteTransaction = async (req: Request, res: Response) => {
         res.status(200).json({ message: 'Transação deletada com sucesso' })
         return;
     } catch (error) {
-        console.log(error)
         res.status(500).json({ message: 'Erro ao deletar Transação' })
         return;
     }
