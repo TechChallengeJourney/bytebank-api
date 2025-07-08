@@ -43,8 +43,6 @@ export const getTransactions = async (req: Request, res: Response): Promise<any>
             return res.status(404).json({ message: 'Não foram encontradas transações.' })
         }
 
-        // return res.status(200).json(transactions)
-
         const total = await Transaction.countDocuments(transactions)
 
         return res.status(200).json({
