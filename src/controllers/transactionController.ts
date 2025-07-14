@@ -2,13 +2,13 @@ import { Request, Response } from 'express';
 import Transaction from '../models/transactionModel';
 import mongoose from 'mongoose';
 import User from '../models/userModel';
-import { TransactionType } from '../enums/transactionType';
 import { uploadFile } from '../services/fileService';
 import Category from '../models/categoryModel';
 import Card from '../models/cardModel';
 import Method from '../models/methodsModel';
 import { getFilteredTransactions } from '../services/transactionService';
 import { validateTransactionConsistency } from '../validators/transactionValidator';
+import { TransactionType } from '../enums/transactionType.enum';
 
 export const getTransactions = async (req: Request, res: Response): Promise<any> => {
     try {

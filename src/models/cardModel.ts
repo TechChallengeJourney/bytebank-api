@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import { CardFlag } from '../enums/cardFlag'
+import { CardFlag } from '../enums/cardFlag.enum'
 
 interface ICard {
     userId: string

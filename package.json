@@ -2,7 +2,7 @@
   "name": "node-api-project",
   "version": "1.0.0",
   "description": "A Node.js API project with GET, PUT, and DELETE endpoints and Swagger documentation.",
-  "main": "src/app.js",
+  "main": "src/app.ts",
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js",

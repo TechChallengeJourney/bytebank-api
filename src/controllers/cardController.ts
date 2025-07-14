@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 import Card from '../models/cardModel';
 import User from '../models/userModel';
-import { CardFlag } from '../enums/cardFlag';
+import { CardFlag } from '../enums/cardFlag.enum';
 
 export const getCards = async (req: Request, res: Response): Promise<any> => {
     try {
