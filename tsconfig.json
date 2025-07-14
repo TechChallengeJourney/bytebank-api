@@ -4,11 +4,11 @@
     "module": "CommonJS",
     "outDir": "./dist",
     "rootDir": "./src",
-    "baseUrl": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": "./src"
   },
   "include": ["src"]
 }

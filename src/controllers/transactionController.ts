@@ -8,7 +8,7 @@ import Card from '../models/cardModel';
 import Method from '../models/methodsModel';
 import { getFilteredTransactions } from '../services/transactionService';
 import { validateTransactionConsistency } from '../validators/transactionValidator';
-import { TransactionType } from 'enums/transactionType';
+import { TransactionType } from 'enums/transactionType.enum';
 
 export const getTransactions = async (req: Request, res: Response): Promise<any> => {
     try {

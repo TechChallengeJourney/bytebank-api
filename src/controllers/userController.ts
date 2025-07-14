@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import User from '../models/userModel';
-import { WidgetKey } from '../enums/widgets';
+import { WidgetKey } from '../enums/widgets.enum';
 
 export const getUsers = async (req: Request, res: Response): Promise<any> => {
     try {

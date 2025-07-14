@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import { WidgetKey } from '../enums/widgets'
+import { WidgetKey } from '../enums/widgets.enum'
 
 interface IUser {
     name: string
