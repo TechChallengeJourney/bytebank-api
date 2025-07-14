@@ -1,7 +1,12 @@
-FROM node:20-slim
+FROM node:20.16.0-alpine
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --legacy-peer-deps && npm cache clean --force
+COPY tsconfig.json ./
+
+RUN npm install
 COPY . .
+
+RUN npm run build
+
 EXPOSE 8080
-CMD ["node", "src/app.js"]
+CMD ["node", "dist/app.js"]

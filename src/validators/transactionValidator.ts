@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
-import { TransactionType } from 'enums/transactionType.enum'
-import Method from 'models/methodsModel'
-import Category from 'models/categoryModel'
+import { TransactionType } from '../enums/transactionType.enum'
+import Method from '../models/methodsModel'
+import Category from '../models/categoryModel'
 
 
 interface ValidateTransactionOptions {

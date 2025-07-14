@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import { TransactionType } from 'enums/transactionType.enum'
+import { TransactionType } from '../enums/transactionType.enum'
 
 interface ITransaction {
     userId: string
