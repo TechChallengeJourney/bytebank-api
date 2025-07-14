@@ -7,17 +7,53 @@ import { uploadFile } from '../services/fileService';
 import Category from '../models/categoryModel';
 import Card from '../models/cardModel';
 import Method from '../models/methodsModel';
+import { getFilteredTransactions } from '../services/transactionService';
+import { validateTransactionConsistency } from '../validators/transactionValidator';
 
-export const getTransaction = async (req: Request, res: Response): Promise<any> => {
+export const getTransactions = async (req: Request, res: Response): Promise<any> => {
     try {
-        const { userId } = req.query
+        const { userId, type, minValue, maxValue, startDate, endDate, methodId, categoryId } = req.query
+
+        const page = parseInt(req.query.page as string) || 1
+        const limit = parseInt(req.query.limit as string) || 5
 
         if (!userId || typeof userId !== 'string') {
             return res.status(400).json({ message: 'userId é obrigatório e deve ser uma string' })
         }
 
-        const transactions = await Transaction.find({ userId })
-        return res.status(200).json(transactions)
+        const isValidUser = await User.findById(userId);
+        if (!isValidUser) {
+            return res.status(400).json({ message: 'Usuário não foi encontrado, tente novamente por favor.' });
+        }
+
+        const transactions = await getFilteredTransactions({
+            userId: userId?.toString(),
+            page: page,
+            limit: limit,
+            type: type?.toString(),
+            minValue: minValue ? Number(minValue) : undefined,
+            maxValue: maxValue ? Number(maxValue) : undefined,
+            startDate: startDate ? new Date(startDate as string) : undefined,
+            endDate: endDate ? new Date(endDate as string) : undefined,
+            methodId: methodId as string | undefined,
+            categoryId: categoryId as string | undefined,
+        })
+
+        if (!transactions.length) {
+            return res.status(404).json({ message: 'Não foram encontradas transações.' })
+        }
+
+        const total = await Transaction.countDocuments(transactions)
+
+        return res.status(200).json({
+            data: transactions,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            }
+        })
     } catch (error) {
         console.error(error)
         return res.status(500).json({ message: 'Erro ao buscar transação' })
@@ -28,8 +64,8 @@ export const createTransaction = async (req: Request, res: Response): Promise<an
     try {
         const { userId, value, type, createdAt, categoryId, methodId, cardId } = req.body
 
-        if (!userId || !value || !type || !createdAt || !categoryId) {
-            return res.status(400).json({ message: 'Preencha todos os campos obrigatórios, por favor!' })
+        if (!userId || !value || !type || !createdAt || !categoryId || !methodId) {
+            return res.status(400).json({ message: 'UserId, value, type, createdAt, categoryId e methodId são obrigatórios' })
         }
 
         if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -45,17 +81,13 @@ export const createTransaction = async (req: Request, res: Response): Promise<an
             return res.status(400).json({ message: 'Usuário não foi encontrado, tente novamente por favor.' });
         }
 
-        const isValidCategoy = await Category.findById(categoryId);
-        if (!isValidCategoy) {
-            return res.status(400).json({ message: 'Categoria não foi encontrada, tente novamente por favor.' });
+        const { valid, message } = await validateTransactionConsistency({ methodId, categoryId, type })
+
+        if (!valid) {
+            return res.status(400).json({ message })
         }
 
-        const isValidMethod = await Method.findById(methodId);
-        if(!isValidMethod) {
-            return res.status(400).json({ message: 'Método de pagamento não foi encontrado, tente novamente por favor.' });
-        }
-
-        if(cardId) {
+        if (cardId) {
             const isValidCard = await Card.findById(cardId);
             if (!isValidCard) {
                 return res.status(400).json({ message: 'Cartão não encontrado, escolha outro por favor.' });
@@ -75,7 +107,7 @@ export const createTransaction = async (req: Request, res: Response): Promise<an
 export const updateTransaction = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
-        const { userId, value, type, createdAt, categoryId, methodId, cardId  } = req.body;
+        const { userId, value, type, createdAt, categoryId, methodId, cardId } = req.body;
 
         if (!id) {
             return res.status(400).json({ message: 'Id da transação é obrigatório' });
@@ -104,11 +136,11 @@ export const updateTransaction = async (req: Request, res: Response): Promise<an
         }
 
         const isValidMethod = await Method.findById(methodId);
-        if(!isValidMethod) {
+        if (!isValidMethod) {
             return res.status(400).json({ message: 'Método de pagamento não foi encontrado, tente novamente por favor.' });
         }
 
-        if(cardId) {
+        if (cardId) {
             const isValidCard = await Card.findById(cardId);
             if (!isValidCard) {
                 return res.status(400).json({ message: 'Cartão não encontrado, escolha outro por favor.' });

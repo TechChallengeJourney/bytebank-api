@@ -5,6 +5,7 @@ import transactionRoutes from './transactionRoutes'
 import authRoutes from './authRoutes'
 import categoryRoutes from './categoryRoutes'
 import methodRoutes from './methodRoutes'
+import widgetRoutes from './widgetRoutes'
 
 const router = Router()
 
@@ -14,5 +15,6 @@ router.use('/cards', cardRoutes)
 router.use('/transactions', transactionRoutes)
 router.use('/categories', categoryRoutes)
 router.use('/methods', methodRoutes)
+router.use('/widgets', widgetRoutes)
 
 export default router
