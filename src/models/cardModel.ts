@@ -10,6 +10,7 @@ interface ICard {
     expirationDate: Date
     cvv: number
     flag: CardFlag
+    limit: number
     blocked: boolean
 }
 
@@ -22,6 +23,7 @@ const cardSchema = new Schema<ICard>({
     expirationDate: { type: Date, required: true },
     cvv : { type: Number, required: true },
     flag: { type: String, required: true, enum: Object.values(CardFlag) },
+    limit: { type: Number, required: true },
     blocked: { type: Boolean }
 })
 
