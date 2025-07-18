@@ -1,5 +1,5 @@
 services:
-  api.bytebank:
+  bytebank-api:
     build:
       context: .
       dockerfile: Dockerfile
@@ -9,13 +9,4 @@ services:
       - ./src:/app/src
     environment:
       NODE_ENV: development
-    restart: always
-  db.bytebank:
-    image: mongo:6.0
-    container_name: db.bytebank
-    restart: always
-    ports:
-      - "27018:27018"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+    restart: always 
