@@ -26,22 +26,21 @@ export const financialAnalysisWidget = async (userId: string) => {
     }
 
     const sortedCategories = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])
-    const topCategoryId = sortedCategories[0]?.[0]
-    const topCategoryTotal = sortedCategories[0]?.[1] || 0
+    const categoryId = sortedCategories[0]?.[0]
 
-    let topCategory = null
+    let category = null
 
-    if (topCategoryId) {
-        const category = await Category.findById(topCategoryId).lean()
-        if (category) {
-            const percent = expense > 0 ? Math.round((topCategoryTotal / expense) * 100) : 0
-            topCategory = { name: category.name, percent }
+    if (categoryId) {
+        const categorySelected = await Category.findById(categoryId).lean()
+        if (categorySelected) {
+            const percentage = expense > 0 ? ((expense / (income + expense)) * 100).toFixed(2) : 0
+            category = { name: categorySelected.name, percentage }
         }
     }
-
-    return {
+    const response = (income && expense && category) ? {
         income,
         expense,
-        topCategory
-    }
+        category
+    }: null;
+    return response;
 }

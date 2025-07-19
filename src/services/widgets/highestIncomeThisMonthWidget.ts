@@ -13,14 +13,16 @@ export const highestIncomeThisMonthWidget = async (userId: string) => {
         { $group: { _id: '$categoryId', total: { $sum: '$value' } } },
         { $sort: { total: -1 } },
         { $limit: 1 }
-    ])
+    ]);
 
-    const data = expenses[0];
+    if(expenses.length !== 0) {
+        const data = expenses[0];    
+        const category = await Category.findById(data._id).lean();
+        return category ? {
+            category: category.name,
+            value: data.total
+        } : null;
+    } 
 
-    const category = await Category.findById(data._id).lean()
-
-    return {
-        category: category?.name || 'Sem dados',
-        value: data?.total || 0
-    }
+    return null;
 }

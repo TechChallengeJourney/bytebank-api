@@ -25,6 +25,6 @@ export const dailyExpenseAverageWidget = async (userId: string) => {
     const daysUntilToday = now.getDate();
 
     return {
-        average: totalExpenses / daysUntilToday
+        value: totalExpenses / daysUntilToday
     };
 };
