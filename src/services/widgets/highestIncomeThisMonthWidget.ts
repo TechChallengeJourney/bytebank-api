@@ -1,7 +1,7 @@
 import Transaction from '../../models/transactionModel'
 import Category from '../../models/categoryModel';
 
-export const highestIncomeThisMonthWidget = async (userId: string) => {
+export const highestIncomeWidget = async (userId: string) => {
 
     const expenses = await Transaction.aggregate([
         {

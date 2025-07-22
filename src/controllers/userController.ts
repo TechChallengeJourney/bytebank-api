@@ -70,8 +70,8 @@ export const deleteUser = async (req: Request, res: Response): Promise<any> => {
 export const updateUserWidgets = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
-        const { widgets } = req.body;
-
+        const widgets = req.body;
+        
         if (!Array.isArray(widgets)) {
             return res.status(400).json({ message: 'Widgets deve ser um array de strings.' });
         }
