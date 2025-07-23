@@ -39,21 +39,11 @@ export const getTransactions = async (req: Request, res: Response): Promise<any>
             categoryId: categoryId as string | undefined,
         })
 
-        if (!transactions.length) {
+        if (!transactions.data?.length) {
             return res.status(404).json({ message: 'Não foram encontradas transações.' })
         }
 
-        const total = await Transaction.countDocuments(transactions)
-
-        return res.status(200).json({
-            data: transactions,
-            pagination: {
-                total,
-                page,
-                limit,
-                totalPages: Math.ceil(total / limit)
-            }
-        })
+        return res.status(200).json(transactions)
     } catch (error) {
         console.error(error)
         return res.status(500).json({ message: 'Erro ao buscar transação' })

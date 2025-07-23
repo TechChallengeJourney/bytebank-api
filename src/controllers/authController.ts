@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../models/userModel";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import Address from '../models/addressModel';
 
 export const loginUser = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -60,6 +61,15 @@ export const registerUser = async (req: Request, res: Response): Promise<any> =>
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await User.create({ name, email, password: hashedPassword });
+
+        await Address.create({
+            userId: newUser._id,
+            address: '',
+            city: '',
+            state: '',
+            code: null,
+            complement: ''
+        });
 
         return res.status(201).json({
             id: newUser._id.toString(),
