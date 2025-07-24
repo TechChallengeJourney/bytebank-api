@@ -43,5 +43,19 @@ export const getFilteredTransactions = async (filters: TransactionFilter) => {
     }
 
     const skip = (filters.page - 1) * filters.limit
-    return await Transaction.find(query).skip(skip).limit(filters.limit).lean()
+
+    const [data, total] = await Promise.all([
+        Transaction.find(query).skip(skip).limit(filters.limit).lean(),
+        Transaction.countDocuments(query)
+    ])
+
+    return {
+        data,
+        pagination: {
+            total,
+            page: filters.page,
+            limit: filters.limit,
+            totalPages: Math.ceil(total / filters.limit)
+        }
+    }
 }
