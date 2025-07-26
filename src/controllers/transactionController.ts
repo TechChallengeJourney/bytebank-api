@@ -138,8 +138,12 @@ export const updateTransaction = async (req: Request, res: Response): Promise<an
         }
 
         const file = (req.file) ? await uploadFile(req, res) : null;
-        const newTransaction = await Transaction.create({ userId, value, type, createdAt, categoryId, methodId, cardId, fileId: file?._id })
-        return res.status(201).json(newTransaction)
+        const transaction = await Transaction.findByIdAndUpdate(
+            id,
+            { userId, value, type, createdAt, categoryId, methodId, cardId, fileId: file?._id },
+            { new: true }
+        );
+        return res.status(201).json(transaction)
     } catch (error) {
         console.error(error)
         return res.status(500).json({ message: 'Erro ao atualizar a transação, tente novamente por favor.' })
