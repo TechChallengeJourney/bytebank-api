@@ -20,7 +20,6 @@ export const getCategoriesByType = async (req: Request, res: Response): Promise<
 
         const categories = await Category.find({type}).lean()
         
-        
         return res.status(200).json(categories);
     } catch (error) {
         return res.status(401).json({ message: 'Erro ao buscar as categorias.' });

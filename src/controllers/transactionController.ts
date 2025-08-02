@@ -39,11 +39,8 @@ export const getTransactions = async (req: Request, res: Response): Promise<any>
             categoryId: categoryId as string | undefined,
         })
 
-        if (!transactions.data?.length) {
-            return res.status(404).json({ message: 'Não foram encontradas transações.' })
-        }
 
-        return res.status(200).json(transactions)
+        return res.status(200).json((transactions && transactions?.data.length) ? transactions : []);
     } catch (error) {
         console.error(error)
         return res.status(500).json({ message: 'Erro ao buscar transação' })
