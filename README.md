@@ -1,76 +1,167 @@
-# Node API Project
+# Bytebank API - Tech Challenge #2
 
-This project is a Node.js API that provides GET, PUT, and DELETE endpoints for managing users, transactions, and cards. It is built using Express and includes Swagger documentation for easy reference.
+Bem-vindo à **Bytebank API**, o backend responsável por gerenciar todas as funcionalidades do Bytebank.  
+Desenvolvida em **Node.js** com **Express** e **MongoDB**, esta API fornece endpoints para autenticação, gerenciamento de usuários, transações, categorias, cartões e widgets personalizados.
 
-## Project Structure
+---
+
+## 🚀 Funcionalidades
+
+A API fornece suporte para:
+
+- **Autenticação** com JWT;
+- **CRUD de transações** (criar, editar, excluir e listar);
+- **Gestão de categorias**;
+- **Gerenciamento de cartões**;
+- **Widgets** com dados agregados sobre as finanças do usuário (gastos diários, resumo mensal, categoria mais cara, etc.);
+- **Upload de arquivos** (ex: imagem de perfil);
+- **Documentação de API** via Swagger e YAML.
+
+---
+
+## 📂 Estrutura do Projeto
+
+A estrutura principal da API é organizada da seguinte forma:
 
 ```
-node-api-project
-├── src
-│   ├── app.ts               # Entry point of the application
-│   ├── config               # Contains API configs definitions
-│   ├── routes               # Contains API route definitions
-│   │   └── index.ts
-│   ├── controllers          # Contains API logic
-│   └── docs                 # Contains API Swagger documentation
-├── Dockerfile               # Dockerfile for building the application image
-├── docker-compose.yml       # Docker Compose configuration
-├── package.json             # npm configuration file
-└── README.md                # Project documentation
+src/
+ ├── config/              # Configurações (MongoDB, Swagger)
+ ├── controllers/         # Controladores das rotas
+ ├── docs/                # Documentação Swagger
+ ├── enums/               # Enums para padronização
+ ├── middlewares/         # Middlewares de autenticação e validação
+ ├── models/              # Modelos do MongoDB
+ ├── routes/              # Definição das rotas da API
+ ├── services/            # Serviços e lógica de negócio
+ ├── validators/          # Validações de entrada
+ ├── app.ts               # Configuração principal do Express
+ └── uploads/             # Diretório para arquivos enviados
 ```
 
-## Getting Started
+---
 
-### Prerequisites
+## 🛠️ Pré-requisitos
 
-- Node.js (version 14 or higher)
-- npm (Node package manager)
-- Docker (for containerization)
+Certifique-se de ter instalado:
 
-### Installation
+- [Node.js](https://nodejs.org/) (versão LTS recomendada)
+- [Docker](https://www.docker.com/)
+- [MongoDB](https://www.mongodb.com/) (se rodar localmente sem Docker)
 
-1. Clone the repository:
-   ```
-   git clone <repository-url>
-   cd node-api-project
-   ```
+---
 
-2. Install dependencies:
-   ```
-   npm install
-   ```
+## 📦 Instalação
 
-### Running the Application
+Clone o repositório:
 
-To run the application locally, use the following command:
+```bash
+git clone https://github.com/TechChallengeJourney/bytebank-api.git
+cd bytebank-api
 ```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+---
+
+## 🚀 Como Executar
+
+### Modo Desenvolvimento
+
+```bash
 npm run dev
 ```
 
-### Docker
+### Usando Docker
 
-To build and run the application using Docker, execute the following commands:
+```bash
+docker-compose build
+docker-compose up
+```
 
-1. Build the Docker image:
-   ```
-   docker build -t node-api-project .
-   ```
+A API estará disponível em:
 
-2. Run the Docker container:
-   ```
-   docker run -p 8080:8080 node-api-project
-   ```
+```
+http://localhost:8080
+```
 
-### API Endpoints
+---
 
-- **GET /api/users**: Retrieve a list of users.
-- **PUT /api/users/:id**: Update user data by ID.
-- **DELETE /api/users/:id**: Delete a user by ID.
+## 📜 Documentação da API
 
-### Swagger Documentation
+A documentação completa dos endpoints pode ser acessada em:
 
-The API is documented using Swagger. You can access the documentation at `http://localhost:8080/api-docs` after starting the application.
+```
+http://localhost:3001/api-docs
+```
 
-### License
+A documentação foi escrita em **Swagger** utilizando arquivos YAML, localizados em `src/docs`.
 
-This project is licensed under the MIT License.
+---
+
+## 🗄️ Banco de Dados
+
+O projeto utiliza **MongoDB** como banco de dados principal.  
+A configuração de conexão está localizada em `src/config/mongodb.ts` e utiliza variáveis de ambiente definidas no arquivo `.env`.
+
+Exemplo de `.env`:
+
+```env
+# Porta em que a API será executada
+PORT=8080
+
+# Senha do usuário admin do MongoDB
+MONGODB_ADMIN_PASS=
+
+# URI de conexão com o MongoDB (ex: mongodb+srv://user:pass@cluster.mongodb.net/dbname)
+MONGODB_URI=
+
+# Chave secreta para geração e validação de tokens JWT
+JWT_SECRET=
+```
+
+---
+
+## 🛠️ Principais Tecnologias
+
+- [Node.js](https://nodejs.org/)
+- [Express](https://expressjs.com/)
+- [MongoDB](https://www.mongodb.com/)
+- [Mongoose](https://mongoosejs.com/)
+- [Swagger](https://swagger.io/)
+- [JWT](https://jwt.io/)
+- [Multer](https://github.com/expressjs/multer) (upload de arquivos)
+- [Docker](https://www.docker.com/)
+
+---
+
+## 📊 Widgets Implementados
+
+Os serviços de widgets estão localizados em `src/services/widgets` e atualmente incluem:
+
+- **dailyExpenseAverageWidget** → Média de gastos diários.
+- **financialAnalysisWidget** → Análise financeira geral.
+- **financialStatusWidget** → Status financeiro.
+- **highestIncomeThisMonthWidget** → Maior receita do mês.
+- **monthlySummaryWidget** → Resumo mensal.
+- **mostExpensiveCategoryWidget** → Categoria mais cara.
+
+---
+
+## 🌐 Deploy
+
+O backend é hospedado na **AWS ECS** com imagens armazenadas no **AWS ECR**.  
+O deploy é realizado via pipelines automatizados para manter a API atualizada.
+
+---
+
+## 📎 Links Úteis
+
+- [Express](https://expressjs.com/)
+- [MongoDB](https://www.mongodb.com/docs/)
+- [Swagger](https://swagger.io/specification/)
+- [JWT](https://jwt.io/)
+- [Docker](https://docs.docker.com/)
