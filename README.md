@@ -95,7 +95,7 @@ http://localhost:8080
 A documentação completa dos endpoints pode ser acessada em:
 
 ```
-http://localhost:3001/api-docs
+http://localhost:8080/api-docs
 ```
 
 A documentação foi escrita em **Swagger** utilizando arquivos YAML, localizados em `src/docs`.
